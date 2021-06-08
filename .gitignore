@@ -11,6 +11,7 @@
 *.sln.docstates
 presidentUK.njsproj
 presidentUK.sln
+\config
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
