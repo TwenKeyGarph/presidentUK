@@ -4,9 +4,14 @@ const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
 const config = require('./config/general.json');
+client.prefix = config.prefix;
 const fs = require('fs');
 
-// [COMMAND HANDLER]
+/*
+ * ================== * 
+// [COMMAND_HANDLER]
+ * ================== *
+*/
 // init cmds
 const commandFiles = fs.readdirSync('./common/commands').filter(file => file.endsWith('.js'));
 
@@ -28,43 +33,29 @@ for (const comm of client.commands.keys()) {
     }
 }
 
-// secondary funcs
+
+/*
+ * ================== *
+// [EVENT_HANDLER]
+ * ================== *
+*/
+// init events
+const eventFiles = fs.readdirSync('./common/events').filter(file => file.endsWith('.js'));
+
+// load events
+for (const file of eventFiles) {
+    const event = require(`./common/events/${file}`);
+    if (event.once) {
+        client.once(event.name, (...args) => event.execute(...args, client));
+    } else {
+        client.on(event.name, (...args) => event.execute(...args, client));
+    }
+}
+
+// sec funcs
 client.getCmdByAlias = (cmd) => {
     return client.commands.get(client.CACHE.get(cmd));
 };
 
-// main func
-function main() {
-    client.on('ready', () => {
-        console.log(`${client.user.username} started.`);
-    });
-    client.on('warn', (info) => console.log(info));
-    client.on('error', console.error);
-    client.on('message', (message) => { 
-        if (message.author.bot) return 1; // msg from bot
-        if (!message.guild) return 2; // msg in DM
-        if (!(message.content.startsWith(config.prefix))) return 3; // msg without prefix
-
-        let cmdFull = message.content.slice(config.prefix.length); 
-        let cmdArgs = cmdFull.split(/ +/);
-        let cmdCall = cmdArgs.shift().toLowerCase();
-
-        if (!client.CACHE.has(cmdCall)) return 4; // cmd not found
-        const cmd = client.getCmdByAlias(cmdCall);
-        
-
-        try {
-            cmd.execute(client, message, cmdArgs);
-        } catch (error) {
-            console.error(error);
-            message.channel.send(`error caught \`${cmd.name}\`:\`${cmdCall}\`\n\`${error.message}\``);
-        }
-
-    });
-
-    client.login(config.token);
-}
-
-
-
-main();
+// main
+client.login(config.token);
