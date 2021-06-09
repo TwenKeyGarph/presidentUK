@@ -9,7 +9,7 @@ module.exports = {
     execute(client, message, args) {
         let arg = args[0];
         if (client.CACHE.has(arg))
-             message.reply(`${client.commands.get(client.CACHE.get(args[0])).aliases[0]} is ${client.commands.get(client.CACHE.get(args[0])).about}`)
+            message.reply(`${client.getCmdByAlias(arg).aliases[0]} is ${client.getCmdByAlias(arg).about}`)
         else 
             message.reply(`Wrong command (\`${arg}\`)`)
     },
