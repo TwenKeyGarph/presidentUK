@@ -13,7 +13,7 @@ module.exports = {
         let cmdArgs = cmdFull.split(/ +/);
         let cmdCall = cmdArgs.shift().toLowerCase();
 
-        if (!client.CACHE.has(cmdCall)) return 4; // cmd not found
+        if (!client.CACHE.alias.has(cmdCall)) return 4; // cmd not found
         const cmd = client.getCmdByAlias(cmdCall);
 
         try {

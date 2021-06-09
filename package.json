@@ -1,19 +1,20 @@
 {
   "name": "president-uk",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "node app"
   },
   "description": "presidentUK",
   "author": {
-    "name": ""
+    "name": "TwenKey"
   },
   "dependencies": {
     "body-parser": "^1.15.0",
     "cookie-parser": "^1.4.0",
     "debug": "^2.2.0",
     "discord.js": "^12.5.3",
+    "esm": "^3.2.25",
     "express": "^4.14.0",
     "morgan": "^1.7.0",
     "pug": "^3.0.2",
