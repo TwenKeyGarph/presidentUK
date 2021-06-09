@@ -16,7 +16,6 @@ module.exports = {
         if (!client.CACHE.has(cmdCall)) return 4; // cmd not found
         const cmd = client.getCmdByAlias(cmdCall);
 
-
         try {
             cmd.execute(client, message, cmdArgs);
         } catch (error) {
