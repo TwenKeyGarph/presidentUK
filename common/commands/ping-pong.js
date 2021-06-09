@@ -2,6 +2,7 @@
 
 // export
 module.exports = {
+    sysname: 'ping-pong',
     callout: 'ping',
     about: 'Awesome pong!',
     example: 'ping',
