@@ -6,6 +6,7 @@ client.commands = new Discord.Collection();
 const config = require('./config/general.json');
 client.prefix = config.prefix;
 const fs = require('fs');
+client.CACHE = [];
 
 /*
  * ================== * 
@@ -26,10 +27,10 @@ for (const file of commandFiles) {
 }
 
 // caching aliases
-client.CACHE = new Map();
+client.CACHE.alias = new Map();
 for (const comm of client.commands.keys()) {
     for (const alias of client.commands.get(comm).aliases) {
-        client.CACHE.set(alias, comm); // console.log(`${alias} associated to ${comm}`); // dbg
+        client.CACHE.alias.set(alias, comm); // console.log(`${alias} associated to ${comm}`); // dbg
     }
 }
 
@@ -54,7 +55,7 @@ for (const file of eventFiles) {
 
 // sec funcs
 client.getCmdByAlias = (cmd) => {
-    return client.commands.get(client.CACHE.get(cmd));
+    return client.commands.get(client.CACHE.alias.get(cmd));
 };
 
 // main
