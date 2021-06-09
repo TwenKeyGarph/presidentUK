@@ -12,10 +12,17 @@ const commandFiles = fs.readdirSync('./common/commands').filter(file => file.end
 for (const file of commandFiles) {
     const command = require(`./common/commands/${file}`);
     try {
-        client.commands.set(command.callout, command);
-        console.log(`${file} success.`);
+        client.commands.set(command.name, command); // console.log(`${file} success.`); // dbg
     } catch (error) {
         console.log(`${file}:\n${error}`);
+    }
+}
+
+// caching aliases
+client.CACHE = new Map();
+for (const comm of client.commands.keys()) {
+    for (const alias of client.commands.get(comm).aliases) {
+        client.CACHE.set(alias, comm); // console.log(`${alias} associated to ${comm}`); // dbg
     }
 }
 
@@ -35,15 +42,15 @@ function main() {
         let cmdArgs = cmdFull.split(' ');
         let cmdCall = cmdArgs.shift().toLowerCase();
 
-        if (!client.commands.has(cmdCall)) return 4;
-        const cmd = client.commands.get(cmdCall);
+        if (!client.CACHE.has(cmdCall)) return 4; // cmd not found
+        const cmd = client.commands.get(client.CACHE.get(cmdCall));
         
 
         try {
             cmd.execute(client, message, cmdArgs);
         } catch (error) {
             console.error(error);
-            message.channel.send(`error caught \`${cmd.sysname}\`:\`${cmd.callout}\`\n\`${error.message}\``);
+            message.channel.send(`error caught \`${cmd.name}\`:\`${cmdCall}\`\n\`${error.message}\``);
         }
 
     });
