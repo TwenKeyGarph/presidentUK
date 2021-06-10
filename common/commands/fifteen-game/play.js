@@ -26,7 +26,7 @@ Fifteen = class {
         return isWon
     }
 
-    getRawDraw() {
+    getFormatDraw() {
         let result = '';
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
@@ -89,7 +89,7 @@ Fifteen = class {
         return result;
     }
 
-    toDraw() {
+    toRawDraw() {
         console.log(this.board);
         let res = '';
         for (let i = 0; i < 4; i++) {
@@ -133,10 +133,47 @@ exports.out = async function (client, message, arg) {
         return 1;
     client.CACHE.ff.push(sessionID);
     message.channel.send(`Session initialized by ${message.author.username}`);
-    const FF = new Fifteen(sessionID);
-    console.log(FF);
-    message.reply('do');
+    const Field = new Fifteen(sessionID);
+    const msgPromise = await message.channel.send(Field.getFormatDraw());
 
+    const filter = message => message.author.id == sessionID;
+    const collector = message.channel.createMessageCollector(filter, { time: 45000 });
 
-    client.CACHE.ff.splice(client.CACHE.ff.indexOf(sessionID));
+    // moves handle
+    collector.on('collect', m => {
+        console.log(`toMove(${m.content})`);
+        if (m.content == 'cancel') {
+            collector.stop('cancel');
+        } else if (m.content == 'cheat') {
+            Field.toCheat();
+            msgPromise.edit(Field.getFormatDraw());
+        }
+        let num = Number(m.content);
+        if (num > 0 && num < 16) {
+            Field.toMoveByNumber(num);
+            if (Field.isWon()) {
+                msgPromise.edit(Field.getFormatDraw());
+                collector.stop('won');
+            }
+            else {
+                msgPromise.edit(Field.getFormatDraw());
+            }
+        }
+        collector.resetTimer();
+        m.delete();
+    });
+    // finish game
+    collector.on('end', (collected, reason) => {
+        console.log(`Moves: ${collected.size}`);
+        if (reason == 'won') {
+            let won_time = (Date.now() - msgPromise.createdTimestamp) / 1000
+            let won_moves = collected.size
+            message.reply(`You won! \n It took ${won_time} sec & ${won_moves} moves.`);
+        } else if (reason == 'time') {
+            reason = 'time out';
+        }
+        message.channel.send(`Session terminated by ${reason}.`);
+        client.CACHE.ff.splice(client.CACHE.ff.indexOf(sessionID));
+    });
+    return 0;
 }
