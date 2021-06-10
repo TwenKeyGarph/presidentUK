@@ -1,6 +1,6 @@
 // consts
 
-// export
+// export // develping
 module.exports = {
 	name: 'ready',
 	once: true,
