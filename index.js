@@ -53,7 +53,7 @@ for (const file of eventFiles) {
     }
 }
 
-// sec funcs
+// sec funcs other with
 client.getCmdByAlias = (cmd) => {
     return client.commands.get(client.CACHE.alias.get(cmd));
 };
