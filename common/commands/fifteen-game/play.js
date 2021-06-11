@@ -125,6 +125,7 @@ Fifteen = class {
         }
     }
 }
+const fss = require('fs');
 
 // export
 exports.out = async function (client, message, arg) {
@@ -138,6 +139,7 @@ exports.out = async function (client, message, arg) {
 
     const filter = message => message.author.id == sessionID;
     const collector = message.channel.createMessageCollector(filter, { time: 45000 });
+    let won_time, won_moves;
 
     // moves handle
     collector.on('collect', m => {
@@ -166,14 +168,36 @@ exports.out = async function (client, message, arg) {
     collector.on('end', (collected, reason) => {
         console.log(`Moves: ${collected.size}`);
         if (reason == 'won') {
-            let won_time = (Date.now() - msgPromise.createdTimestamp) / 1000
-            let won_moves = collected.size
+            won_time = (Date.now() - msgPromise.createdTimestamp) / 1000
+            won_moves = collected.size
             message.reply(`You won! \n It took ${won_time} sec & ${won_moves} moves.`);
         } else if (reason == 'time') {
             reason = 'time out';
         }
+
+
         message.channel.send(`Session terminated by ${reason}.`);
         client.CACHE.ff.splice(client.CACHE.ff.indexOf(sessionID));
+        let notFound = true;
+        if (reason == 'won') {
+            let JSONfile = require('./list.json');
+            for (place in JSONfile.array) {
+                if (sessionID == JSONfile.array[place].sessionID) {
+                    notFound = false;
+                    if (JSONfile.array[place].won_moves > won_moves) {
+                        JSONfile.array[place] = { sessionID, won_time, won_moves };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            if(notFound) {
+                JSONfile.array.push({ sessionID, won_time, won_moves });
+            }
+            fss.writeFileSync('./common/commands/fifteen-game/list.json', JSON.stringify(JSONfile));
+        }
+
     });
     return 0;
 }
