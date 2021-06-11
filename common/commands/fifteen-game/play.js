@@ -186,10 +186,8 @@ exports.out = async function (client, message, arg) {
                     notFound = false;
                     if (JSONfile.array[place].won_moves > won_moves) {
                         JSONfile.array[place] = { sessionID, won_time, won_moves };
-                        break;
-                    } else {
-                        break;
                     }
+                    break;
                 }
             }
             if(notFound) {
