@@ -175,25 +175,25 @@ exports.out = async function (client, message, arg) {
             reason = 'time out';
         }
 
-
         message.channel.send(`Session terminated by ${reason}.`);
         client.CACHE.ff.splice(client.CACHE.ff.indexOf(sessionID));
-        let notFound = true;
+        // storing into leaderboardfile
+        let isNotFound = true;
         if (reason == 'won') {
             let JSONfile = require('./list.json');
             for (place in JSONfile.array) {
                 if (sessionID == JSONfile.array[place].sessionID) {
-                    notFound = false;
-                    if (JSONfile.array[place].won_moves > won_moves) {
+                    isNotFound = false;
+                    if (JSONfile.array[place].won_moves > won_moves) { // if result better => overwrite
                         JSONfile.array[place] = { sessionID, won_time, won_moves };
                     }
                     break;
                 }
             }
-            if(notFound) {
+            if(isNotFound) { // creating new obj in list
                 JSONfile.array.push({ sessionID, won_time, won_moves });
             }
-            fss.writeFileSync('./common/commands/fifteen-game/list.json', JSON.stringify(JSONfile));
+            fss.writeFileSync('./common/commands/fifteen-game/list.json', JSON.stringify(JSONfile)); // storing
         }
 
     });
