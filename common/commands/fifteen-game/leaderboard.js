@@ -4,6 +4,10 @@ const fss = require('fs');
 // export
 exports.out = function (client, message, arg) {
     let JSONfile = require('./list.json');
+    if (JSONfile.array.length == 0) {
+        message.channel.send('Leaderboard empty.')
+        return 1;
+    }
     let leaderboardMessage = '';
     let index = 0;
     JSONfile.array.sort((a, b) => a.won_moves > b.won_moves ? 1 : -1); // sorting array of obj by moves

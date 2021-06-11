@@ -5,7 +5,7 @@ module.exports = {
     name: 'fifteen-game',
     aliases: ['ff','fifteen'],
     about: 'Awesome game!',
-    example: 'ff play',
+    example: 'ff [play | leaderboard]',
     async execute(client, message, args) {
         if(args[0] == 'play') {
             const promise = await require('./fifteen-game/play.js').out(client, message, args);
