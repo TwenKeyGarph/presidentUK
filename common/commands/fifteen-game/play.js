@@ -147,7 +147,7 @@ exports.out = async function (client, message, arg) {
         if (m.content == 'cancel') {
             collector.stop('cancel');
         } else if (m.content == 'cheat') {
-            Field.toCheat();
+            // Field.toCheat(); cheat
             msgPromise.edit(Field.getFormatDraw());
         }
         let num = Number(m.content);
@@ -160,7 +160,7 @@ exports.out = async function (client, message, arg) {
             else {
                 msgPromise.edit(Field.getFormatDraw());
             }
-        }
+        } 
         collector.resetTimer();
         m.delete();
     });
