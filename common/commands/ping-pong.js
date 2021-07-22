@@ -1,4 +1,5 @@
 // consts
+const mysql = require('mysql');
 
 // export
 module.exports = {

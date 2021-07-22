@@ -7,6 +7,30 @@ const config = require('./config/general.json');
 client.prefix = config.prefix;
 const fs = require('fs');
 client.CACHE = [];
+const mysql = require('mysql');
+
+/*
+ * ================== *
+// [DATABASE_CONNECTION]
+ * ================== *
+*/
+client.connection = mysql.createConnection({
+    host: config.db_host,
+    user: config.db_user,
+    password: config.db_passw,
+    database: config.db_name
+});
+
+client.connection.connect(function (err) {
+    if (err) {
+        console.log(`db not found. some functions can work wrong`)
+        return console.error("HEAD_ERROR: " + err.message);     
+    }
+    else {
+        console.log("Database checked.");
+    }
+});
+
 
 /*
  * ================== * 
@@ -28,7 +52,7 @@ for (const file of commandFiles) {
 
 // caching aliases
 client.CACHE.alias = new Map();
-for (const comm of client.commands.keys()) {
+for (const comm of client.commands.keys()) { 
     for (const alias of client.commands.get(comm).aliases) {
         client.CACHE.alias.set(alias, comm); // console.log(`${alias} associated to ${comm}`); // dbg
     }

@@ -6,6 +6,6 @@ module.exports = {
 	once: true,
 	execute(client) {
 		console.log(`${client.user.username} started.`);
-		client.CACHE.ff = [];
+		client.CACHE.fifteen = [];
 	},
 };

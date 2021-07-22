@@ -130,24 +130,24 @@ const fss = require('fs');
 // export
 exports.out = async function (client, message, arg) {
     const sessionID = message.author.id;
-    if (client.CACHE.ff.indexOf(sessionID) != -1)
+    if (client.CACHE.fifteen.indexOf(sessionID) != -1)
         return 1;
-    client.CACHE.ff.push(sessionID);
+    client.CACHE.fifteen.push(sessionID);
     message.channel.send(`Session initialized by ${message.author.username}`);
     const Field = new Fifteen(sessionID);
     const msgPromise = await message.channel.send(Field.getFormatDraw());
 
     const filter = message => message.author.id == sessionID;
     const collector = message.channel.createMessageCollector(filter, { time: 45000 });
-    let won_time, won_moves;
+    let wonTime, wonMoves;
 
     // moves handle
     collector.on('collect', m => {
-        console.log(`toMove(${m.content})`);
+        // console.log(`toMove(${m.content})`); // dbg
         if (m.content == 'cancel') {
             collector.stop('cancel');
         } else if (m.content == 'cheat') {
-            // Field.toCheat(); cheat
+            Field.toCheat();
             msgPromise.edit(Field.getFormatDraw());
         }
         let num = Number(m.content);
@@ -168,32 +168,28 @@ exports.out = async function (client, message, arg) {
     collector.on('end', (collected, reason) => {
         console.log(`Moves: ${collected.size}`);
         if (reason == 'won') {
-            won_time = (Date.now() - msgPromise.createdTimestamp) / 1000
-            won_moves = collected.size
-            message.reply(`You won! \n It took ${won_time} sec & ${won_moves} moves.`);
+            wonTime = (Date.now() - msgPromise.createdTimestamp) / 1000
+            wonMoves = collected.size
+            message.reply(`You won! \n It took ${wonTime} sec & ${wonMoves} moves.`);
         } else if (reason == 'time') {
             reason = 'time out';
         }
 
         message.channel.send(`Session terminated by ${reason}.`);
-        client.CACHE.ff.splice(client.CACHE.ff.indexOf(sessionID));
+        client.CACHE.fifteen.splice(client.CACHE.fifteen.indexOf(sessionID));
         // storing into leaderboardfile
         let isNotFound = true;
         if (reason == 'won') {
-            let JSONfile = require('./list.json');
-            for (place in JSONfile.array) {
-                if (sessionID == JSONfile.array[place].sessionID) {
-                    isNotFound = false;
-                    if (JSONfile.array[place].won_moves > won_moves) { // if result better => overwrite
-                        JSONfile.array[place] = { sessionID, won_time, won_moves };
-                    }
-                    break;
+            client.connection.query(`SELECT wonMoves FROM fifteengame_leaderboard WHERE sessionID = '${sessionID}'`, function (error, results, fields) {
+                if (error) throw error;
+                if (!(results[0])) { // is result not found
+                    console.log('Inserting new result..')
+                    client.connection.query(`INSERT INTO fifteengame_leaderboard (sessionID, wonMoves, wonTime) VALUES (${sessionID}, ${wonMoves}, ${wonTime});`);
+                } else if (JSON.parse(JSON.stringify(results[0])).wonMoves >= wonMoves) { // update worst result
+                    // console.log(JSON.parse(JSON.stringify(results[0])).wonMoves);
+                    client.connection.query(`UPDATE fifteengame_leaderboard SET wonMoves = ${wonMoves}, wonTime = ${wonTime} WHERE sessionID = '${sessionID}';`)
                 }
-            }
-            if(isNotFound) { // creating new obj in list
-                JSONfile.array.push({ sessionID, won_time, won_moves });
-            }
-            fss.writeFileSync('./common/commands/fifteen-game/list.json', JSON.stringify(JSONfile)); // storing
+            });
         }
 
     });
