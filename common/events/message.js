@@ -24,6 +24,11 @@ module.exports = {
             return 5; // not enough permissions
         }
 
+        message.author.loc = client.bot.users.preferences.get(message.author.id);
+        if (!message.author.loc)
+            message.author.loc = 'eng'; // default lang
+
+
         try {
             cmd.execute(client, message, cmdArgs)
         } catch (err) {

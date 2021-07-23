@@ -10,6 +10,7 @@ client.CACHE = [];
 client.CACHE.privileges = new Map;
 const mysql = require('mysql');
 
+
 /*
  * ================== *
 // [DATABASE_CONNECTION]
@@ -40,6 +41,8 @@ client.connection.query(`SELECT userID, priv FROM privileges;`, function (error,
         client.CACHE.privileges.set(JSONelem.userID, JSONelem.priv);
     });
 });
+
+
 
 
 
