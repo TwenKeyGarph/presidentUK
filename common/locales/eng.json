@@ -1,0 +1,15 @@
+{
+  "code": "eng",
+  "name": "English",
+  "native": "English",
+  "ping_pong": {
+    "about": "Awesome pong!",
+    "pong": "Pong!"
+  },
+  "change_lang": {
+    "notEnoughArgs": "Choose language!",
+    "langList": "List of languages: ",
+    "langNotFound": "Language not found. Try ",
+    "langSet": " choosen."
+  }
+}

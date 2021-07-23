@@ -1,0 +1,15 @@
+{
+  "code": "rus",
+  "name": "Russian",
+  "native": "Русский",
+  "ping_pong": {
+    "about": "Лучший пинг!",
+    "pong": "Понг!"
+  },
+  "change_lang": {
+    "notEnoughArgs": "Выбери язык!",
+    "langList": "Список доступных языков: ",
+    "langNotFound": "Язык не найден. Попробуй ",
+    "langSet": " установлен."
+  }
+}
