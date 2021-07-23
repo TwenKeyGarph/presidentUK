@@ -15,6 +15,14 @@ module.exports = {
 
         if (!client.CACHE.alias.has(cmdCall)) return 4; // cmd not found
         const cmd = client.getCmdByAlias(cmdCall);
+        
+        message.author.priv = client.CACHE.privileges.get(message.author.id)
+        if (!message.author.priv)
+            message.author.priv = 0;
+        if (cmd.privileges && !cmd.privileges.includes(message.author.priv)) {
+            message.reply('Access denied');
+            return 5; // not enough permissions
+        }
 
         try {
             cmd.execute(client, message, cmdArgs)

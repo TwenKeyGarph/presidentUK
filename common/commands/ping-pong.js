@@ -8,6 +8,6 @@ module.exports = {
     about: 'Awesome pong!',
     example: 'ping',
     execute(client, message, args) {
-        message.reply('Pong!');
+        message.reply('Pong!' + message.author.priv);
     },
 };

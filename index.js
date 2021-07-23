@@ -7,6 +7,7 @@ const config = require('./config/general.json');
 client.prefix = config.prefix;
 const fs = require('fs');
 client.CACHE = [];
+client.CACHE.privileges = new Map;
 const mysql = require('mysql');
 
 /*
@@ -30,6 +31,16 @@ client.connection.connect(function (err) {
         console.log("Database connection established.");
     }
 });
+
+// caching privileges
+client.connection.query(`SELECT userID, priv FROM privileges;`, function (error, results, fields) {
+    if (error) throw error;
+    results.forEach(elem => {
+        const JSONelem = JSON.parse(JSON.stringify(elem))
+        client.CACHE.privileges.set(JSONelem.userID, JSONelem.priv);
+    });
+});
+
 
 
 /*
