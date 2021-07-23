@@ -130,10 +130,12 @@ const fss = require('fs');
 // export
 exports.out = async function (client, message, arg) {
     const sessionID = message.author.id;
+    const loc = message.author.loc;
+
     if (client.CACHE.fifteen.indexOf(sessionID) != -1)
         return 1;
     client.CACHE.fifteen.push(sessionID);
-    message.channel.send(`Session initialized by ${message.author.username}`);
+    message.channel.send(client.CACHE.loc[loc].fifteen_game.playStart + message.author.username);
     const Field = new Fifteen(sessionID);
     const msgPromise = await message.channel.send(Field.getFormatDraw());
 
@@ -167,15 +169,18 @@ exports.out = async function (client, message, arg) {
     // finish game
     collector.on('end', (collected, reason) => {
         console.log(`Moves: ${collected.size}`);
+        let locReason;
         if (reason == 'won') {
             wonTime = (Date.now() - msgPromise.createdTimestamp) / 1000
             wonMoves = collected.size
-            message.reply(`You won! \n It took ${wonTime} sec & ${wonMoves} moves.`);
+            message.reply(client.CACHE.loc[loc].fifteen_game.playWon1 + wonTime + client.CACHE.loc[loc].fifteen_game.playWon2 + wonMoves + client.CACHE.loc[loc].fifteen_game.playWon3);
+            locReason = client.CACHE.loc[loc].fifteen_game.reasonWon;
         } else if (reason == 'time') {
-            reason = 'time out';
+            locReason = client.CACHE.loc[loc].fifteen_game.reasonTime;
+        } else {
+            locReason = client.CACHE.loc[loc].fifteen_game.reasonCancel;
         }
-
-        message.channel.send(`Session terminated by ${reason}.`);
+        message.channel.send(client.CACHE.loc[loc].fifteen_game.playFinished + locReason);
         client.CACHE.fifteen.splice(client.CACHE.fifteen.indexOf(sessionID));
         // storing into leaderboardfile
         let isNotFound = true;

@@ -8,6 +8,7 @@ module.exports = {
     aliases: ['ping'],
     example: 'ping',
     execute(client, message, args) {
-        message.reply(client.CACHE.loc[message.author.loc].ping_pong.pong);
+        const loc = message.author.loc;
+        message.reply(client.CACHE.loc[loc].ping_pong.pong);
     },
 };

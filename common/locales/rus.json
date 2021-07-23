@@ -1,15 +1,40 @@
 {
+  "active": true,
+  "simular": "ukr, blr",
   "code": "rus",
   "name": "Russian",
   "native": "Русский",
+  "message": {
+    "accessDenied": "В доступе отказано."
+  },
   "ping_pong": {
     "about": "Лучший пинг!",
     "pong": "Понг!"
   },
   "change_lang": {
+    "about": "Выбор языка.",
     "notEnoughArgs": "Выбери язык!",
     "langList": "Список доступных языков: ",
     "langNotFound": "Язык не найден. Попробуй ",
     "langSet": " установлен."
+  },
+  "fifteen_game": {
+    "about": "Просто, отличная игра!",
+    "doubleSession": "Сессия уже создана. Закройте ",
+    "cmdExample": "Пример: ",
+    "topEmpty": "Таблица лидеров пуста. Ты знаешь что делать.",
+    "topBoard": "Таблица лидеров: ",
+    "playStart": "Сессия выделена ",
+    "playWon1": "Победа, победа! \n Это заняло ",
+    "playWon2": " секунд и ",
+    "playWon3": " ходов.",
+    "reasonWon": "конец игры.",
+    "reasonTime": "время вышло.",
+    "reasonCancel": "игроком.",
+    "playFinished": "Сессия закрыта: "
+  },
+  "about_cmd": {
+    "about": "Вспомогательный инструмент!",
+    "wrongArg": "Неверная команда "
   }
 }
