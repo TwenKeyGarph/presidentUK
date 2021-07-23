@@ -7,20 +7,21 @@ exports.out = function (client, message, arg) {
         if (error) throw error;
         if (results[0]) {
             JSONresult = JSON.parse(JSON.stringify(results))
-            console.log(JSONresult);
             JSONresult.sort((a, b) => a.wonMoves > b.wonMoves ? 1 : -1);
-            console.log(JSONresult)
         } else {
             message.channel.send('Results not found.')
             return 1;
         }
 
-        let leaderboardMessage = '';
-        let index = 0;
-
+        let leaderboardMessage = ''; let index = 0; let member; let num = 0;
+        
         JSONresult.forEach(async place => {
-            let member = await message.guild.members.fetch(place.sessionID);
-            leaderboardMessage += `${++index}. ${member.user.username} - ${place.wonMoves} (${Math.round(place.wonTime)} s)\n`;
+            try {
+                member = await message.guild.members.fetch(place.sessionID); index++;
+                leaderboardMessage += `${++num}. ${member.user.username} - ${place.wonMoves} (${Math.round(place.wonTime)} s)\n`; 
+            } catch {
+                index++;
+            } 
             if (index == JSONresult.length && leaderboardMessage)
                 message.channel.send(leaderboardMessage);
         });

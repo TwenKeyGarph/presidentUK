@@ -5,6 +5,6 @@ module.exports = {
 	name: 'error',
 	once: true,
 	execute(error, client) {
-		console.log(error);
+		console.log('ERROR_EVENT: ', error);
 	},
 };

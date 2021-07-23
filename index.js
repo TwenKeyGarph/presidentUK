@@ -27,7 +27,7 @@ client.connection.connect(function (err) {
         return console.error("HEAD_ERROR: " + err.message);     
     }
     else {
-        console.log("Database checked.");
+        console.log("Database connection established.");
     }
 });
 

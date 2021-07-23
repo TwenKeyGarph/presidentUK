@@ -17,10 +17,10 @@ module.exports = {
         const cmd = client.getCmdByAlias(cmdCall);
 
         try {
-            cmd.execute(client, message, cmdArgs);
-        } catch (error) {
-            console.error(error);
-            message.channel.send(`error caught \`${cmd.name}\`:\`${cmdCall}\`\n\`${error.message}\``);
+            cmd.execute(client, message, cmdArgs)
+        } catch (err) {
+            message.channel.send(`error caught \`${cmd.name}\`:\`${cmdCall}\`\n\`${err.message}\``);
+            console.error(err);      
         }
     },
 };
