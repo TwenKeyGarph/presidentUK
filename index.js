@@ -2,6 +2,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+require("discord-buttons")(client);
 
 const config = require('./config/general.json');
 client.prefix = config.prefix;
@@ -9,7 +10,7 @@ const fs = require('fs');
 client.CACHE = [];
 client.CACHE.privileges = new Map;
 const mysql = require('mysql');
-
+const { MessageButton, MessageActionRow } = require('discord-buttons');
 
 /*
  * ================== *
