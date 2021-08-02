@@ -1,0 +1,41 @@
+{
+	"meta": {
+		"active": true,
+		"simular": "ger",
+		"code": "eng",
+		"name": "English",
+		"native": "English"
+	},
+	"message": {
+		"accessDenied": "Access denied!"
+	},
+	"ping-pong": {
+		"about": "Awesome pong!",
+		"pong": "Pong! {ping}"
+	},
+	"change-lang": {
+		"about": "Choose native language.",
+		"notEnoughArgs": "Choose language!",
+		"langList": "List of languages: ",
+		"langNotFound": "Language not found. Try ",
+		"langSet": "{newlang} successfully choosen."
+	},
+	"fifteen-game": {
+		"about": "Just, awesome game!",
+		"doubleSession": "Session already created. Close by {cmd}",
+		"cmdExample": "Example: {example}",
+		"topEmpty": "Leaderboard is empty. Yo know what's it means?",
+		"topBoard": "Leaderboard:",
+		"playStart": "Session initialized by {author}",
+		"playWon": "You won! \n It took {time} sec & {moves} moves.",
+		"reasonWon": "won.",
+		"reasonTime": "time out.",
+		"reasonCancel": "user.",
+		"playFinished": "Session terminated by {reason}",
+		"cmdExapmle": "fifteen_game.cmdExapmle"
+	},
+	"about-cmd": {
+		"about": "Helping tool!",
+		"wrongArg": "Wrong command (`{cmd}`)"
+	}
+}

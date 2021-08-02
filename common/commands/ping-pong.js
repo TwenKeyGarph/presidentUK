@@ -1,6 +1,5 @@
 // consts
-const mysql = require('mysql');
-
+const i18n = require('i18n');
 
 // export
 module.exports = {
@@ -8,7 +7,11 @@ module.exports = {
     aliases: ['ping'],
     example: 'ping',
     execute(client, message, args) {
-        const loc = message.author.loc;
-        message.reply(client.CACHE.loc[loc].ping_pong.pong);
+        const locale = message.author.loc;
+
+        message.reply(i18n.__mf(
+            { phrase: 'ping-pong.pong', locale: locale },
+            { ping: client.ws.ping }
+        ));
     },
 };

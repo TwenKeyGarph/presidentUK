@@ -1,4 +1,5 @@
 // consts
+const i18n = require('i18n');
 
 // export
 module.exports = {
@@ -18,21 +19,22 @@ module.exports = {
         
         message.author.loc = client.bot.users.preferences.get(message.author.id);
         if (!message.author.loc)
-            message.author.loc = 'eng'; // default lang
+            message.author.loc = 'en' // default language
 
         message.author.priv = client.CACHE.privileges.get(message.author.id)
         if (!message.author.priv)
             message.author.priv = 0;
         if (cmd.privileges && !cmd.privileges.includes(message.author.priv)) {
-            message.reply(client.CACHE.loc[message.author.loc].message.accessDenied);
+            message.reply(i18n.__({ phrase: 'message.accessDenied', locale: message.author.loc }));
             return 5; // not enough permissions
         }
-
-
+     
         try {
             cmd.execute(client, message, cmdArgs)
+            if (client.DEBUG) console.log(`EV_MESSAGE '${cmd.name}:${cmdCall}' called by ${message.author.id} (${message.author.tag}:${message.author.username})`);
         } catch (err) {
             message.channel.send(`error caught \`${cmd.name}\`:\`${cmdCall}\`\n\`${err.message}\``);
+            if (client.DEBUG) console.log(`EV_MESSAGE ${cmd.name}:${cmdCall} - ${err.message}`);
             console.error(err);      
         }
     },

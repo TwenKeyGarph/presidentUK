@@ -2,8 +2,7 @@
 const fs = require('fs');
 const Discord = require('discord.js'); 
 const { MessageButton, MessageActionRow } = require('discord-buttons');
-
-
+const i18n = require('i18n');
 
 // export
 module.exports = {
@@ -11,13 +10,12 @@ module.exports = {
     aliases: ['lang', 'changelang', 'language'],
     example: 'lang <language>',
     async execute(client, message, args) {
-        const loc = message.author.loc;
+        let locale = message.author.loc;
 
         if (!args[0]) {
-            // message.reply(client.CACHE.loc[loc].change_lang.notEnoughArgs)
 
-
-            let embedENG = new Discord.MessageEmbed()
+            let embed = new Object;
+            embed.en = new Discord.MessageEmbed()
                 .setTitle("Locale-system.")
                 .setDescription("Choose your destiny")
                 .setColor('#36A4CF')
@@ -25,7 +23,7 @@ module.exports = {
                 .addField(":flag_gb: __English__", "tia cantry", true)
                 .addField(":flag_ru: Russian", "suqa blet", true);
 
-            let embedRUS = new Discord.MessageEmbed()
+            embed.ru = new Discord.MessageEmbed()
                 .setTitle("Locale-system.")
                 .setDescription("Выбери своего бойца")
                 .setColor('#CE9A14')
@@ -34,41 +32,40 @@ module.exports = {
                 .addField(":flag_ru: __Russian__", "роисся", true);
 
 
-            let buttonLEFT = new MessageButton()
+            let button = new Object;
+            button.left = new MessageButton()
                 .setStyle('blurple')
                 .setLabel('❮')
                 .setID('button_left');
 
-            let buttonRIGHT = new MessageButton()
+            button.right = new MessageButton()
                 .setStyle('blurple')
                 .setLabel('❯')
                 .setID('button_right');
 
-            let buttonSELECT = new MessageButton()
+            button.select = new MessageButton()
                 .setStyle('gray')
                 .setLabel('▣')
                 .setID('button_select');
 
 
             let buttons = new MessageActionRow()
-                .addComponents(buttonLEFT, buttonRIGHT, buttonSELECT);
+                .addComponents(button.left, button.right, button.select);
 
             let buttonsEmpty = new MessageActionRow()
             
-            let msgPromise = await message.channel.send(embedENG, buttons);
+            let msgPromise = await message.channel.send(embed[locale], buttons);
 
             const ButtonCollector = msgPromise.createButtonCollector((button) => button.clicker.user.id === message.author.id, { time: 15000 });
-
-            let choosenLocale = 'eng';
 
             ButtonCollector.on('collect', (b) => {
                 b.reply.defer();
                 if (b.id == 'button_left') {
-                    msgPromise.edit(embedENG, buttons);
-                    choosenLocale = 'eng';
+                    msgPromise.edit(embed.en, buttons);
+                    locale = 'en';
                 } else if (b.id == 'button_right') {
-                    msgPromise.edit(embedRUS, buttons);
-                    choosenLocale = 'rus';
+                    msgPromise.edit(embed.ru, buttons);
+                    locale = 'ru';
                 } else if (b.id == 'button_select') {
                     ButtonCollector.stop('cancel')
                 };
@@ -76,12 +73,13 @@ module.exports = {
             });
 
             ButtonCollector.on('end', (collected, reason) => {
+                i18n.setLocale(locale)
                 let embedEND = new Discord.MessageEmbed()
                     .setTitle("Locale-system.")
-                    .setDescription(client.CACHE.loc[choosenLocale].native + client.CACHE.loc[choosenLocale].change_lang.langSet)
+                    .setDescription(i18n.__mf("change-lang.langSet", { newlang: i18n.__("meta.native") }));
 
-                client.connection.query(`UPDATE user_preferences SET language = '${choosenLocale}' WHERE userID=${message.author.id};`);
-                client.bot.users.preferences.set(message.author.id, choosenLocale);
+                client.connection.query(`UPDATE user_preferences SET language = '${locale}' WHERE userID=${message.author.id};`);
+                client.bot.users.preferences.set(message.author.id, locale);
                 msgPromise.edit(embedEND);
                 setTimeout(function () {
                     msgPromise.delete();
@@ -89,16 +87,18 @@ module.exports = {
                 }, 2000)
             });
         } else if (args[0] == 'list') {
-            console.log(client.CACHE.loc.list);
-            message.channel.send(client.CACHE.loc[loc].change_lang.langList + '\n' + client.CACHE.loc.list); //
-        } else if (!client.CACHE.loc.list.includes(args[0].toLowerCase())) {
-            message.channel.send(client.CACHE.loc[loc].change_lang.langNotFound + '`lang list`')
+            message.channel.send(i18n.__mf(
+                { phrase: 'change-lang.langList', locale: locale }) + '\n' + i18n.getLocales().join(' '));
+        } else if (!i18n.getLocales().includes(args[0].toLowerCase())) {
+            message.channel.send(i18n.__(
+                { phrase: 'change-lang.langNotFound', locale: locale }) + '`lang list`')
             return 1; // lang not found
         } else {
             client.connection.query(`UPDATE user_preferences SET language = '${args[0]}' WHERE userID=${message.author.id};`);
             client.bot.users.preferences.set(message.author.id, args[0]);
-            console.log(args[0]);
-            message.reply(client.CACHE.loc[args[0]].native + client.CACHE.loc[args[0]].change_lang.langSet)
+            message.reply(i18n.__mf(
+                { phrase: 'change-lang.langSet', locale: locale },
+                { newlang: i18n.__({ phrase: 'meta.native', locale: locale}) }));
         }
     },
 };

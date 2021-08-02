@@ -1,4 +1,5 @@
 // consts
+const i18n = require('i18n');
 
 // export // develping
 module.exports = {
@@ -10,8 +11,8 @@ module.exports = {
 		client.bot.users = [];
 		client.bot.users.preferences = new Map;
 
-		require('../system/localization.js').out(client); // localization system
+		require('../systems/i18n.js').out(client);
 
-		console.log(`Application ${client.user.username} are launched.`);
+		if (client.DEBUG) console.log(`EV_READY Application ${client.user.username} are launched.`);
 	},
 };

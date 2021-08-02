@@ -126,16 +126,19 @@ Fifteen = class {
     }
 }
 const fss = require('fs');
+const i18n = require('i18n');
 
 // export
 exports.out = async function (client, message, arg) {
     const sessionID = message.author.id;
-    const loc = message.author.loc;
+    const locale = message.author.loc;
 
     if (client.CACHE.fifteen.indexOf(sessionID) != -1)
         return 1;
     client.CACHE.fifteen.push(sessionID);
-    message.channel.send(client.CACHE.loc[loc].fifteen_game.playStart + message.author.username);
+    message.channel.send(i18n.__mf(
+        { phrase: 'fifteen-game.playStart', locale: locale },
+        { author: message.author.username } ));
     const Field = new Fifteen(sessionID);
     const msgPromise = await message.channel.send(Field.getFormatDraw());
 
@@ -173,14 +176,22 @@ exports.out = async function (client, message, arg) {
         if (reason == 'won') {
             wonTime = (Date.now() - msgPromise.createdTimestamp) / 1000
             wonMoves = collected.size
-            message.reply(client.CACHE.loc[loc].fifteen_game.playWon1 + wonTime + client.CACHE.loc[loc].fifteen_game.playWon2 + wonMoves + client.CACHE.loc[loc].fifteen_game.playWon3);
-            locReason = client.CACHE.loc[loc].fifteen_game.reasonWon;
+            message.reply(i18n.__mf(
+                { phrase: 'fifteen-game.playWon', locale: locale },
+                { time: wonTime, moves: wonMoves}
+            ));
+            locReason = i18n.__(
+                { phrase: 'fifteen-game.reasonWon', locale: locale });
         } else if (reason == 'time') {
-            locReason = client.CACHE.loc[loc].fifteen_game.reasonTime;
+            locReason = i18n.__(
+                { phrase: 'fifteen-game.reasonTime', locale: locale });
         } else {
-            locReason = client.CACHE.loc[loc].fifteen_game.reasonCancel;
+            locReason = i18n.__(
+                { phrase: 'fifteen-game.reasonCancel', locale: locale });
         }
-        message.channel.send(client.CACHE.loc[loc].fifteen_game.playFinished + locReason);
+        message.channel.send(i18n.__mf(
+            { phrase: 'fifteen-game.playFinished', locale: locale },
+            { reason: locReason }));
         client.CACHE.fifteen.splice(client.CACHE.fifteen.indexOf(sessionID));
         // storing into leaderboardfile
         let isNotFound = true;
