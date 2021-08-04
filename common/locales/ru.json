@@ -9,37 +9,32 @@
 	"message": {
 		"accessDenied": "В доступе отказано."
 	},
-	"ping_pong": {
+	"ping-pong": {
 		"about": "Лучший пинг!",
 		"pong": "Понг! {ping}"
 	},
-	"change_lang": {
+	"change-lang": {
 		"about": "Выбор языка.",
 		"notEnoughArgs": "Выбери язык!",
 		"langList": "Список доступных языков: ",
 		"langNotFound": "Язык не найден. Попробуй ",
 		"langSet": "{newlang} успешно выбран."
 	},
-	"fifteen_game": {
+	"fifteen-game": {
 		"about": "Просто, отличная игра!",
-		"doubleSession": "Сессия уже создана. Закройте ",
-		"cmdExample": "Пример: ",
+		"doubleSession": "Сессия уже создана. Если хочешь напечатай {cmd}",
+		"cmdExample": "Пример: {example}",
 		"topEmpty": "Таблица лидеров пуста. Ты знаешь что делать.",
-		"topBoard": "Таблица лидеров: ",
-		"playStart": "Сессия выделена ",
-		"playWon1": "Победа, победа! \n Это заняло ",
-		"playWon2": " секунд и ",
-		"playWon3": " ходов.",
+		"topBoard": "Таблица лидеров:",
+		"playStart": "Сессия выделена {author}.",
+		"playWon": "Победа, победа! \n Это заняло {time} секунд и {moves} ходов.",
 		"reasonWon": "конец игры.",
 		"reasonTime": "время вышло.",
-		"reasonCancel": "игроком.",
-		"playFinished": "Сессия закрыта: "
+		"reasonCancel": "отмена.",
+		"playFinished": "Сессия закрыта: {reason}"
 	},
-	"about_cmd": {
+	"about-cmd": {
 		"about": "Вспомогательный инструмент!",
-		"wrongArg": "Неверная команда "
-	},
-	"change-lang": {
-		"langSet": "{newlang} successfully choosen."
+		"wrongArg": "Неверная команда (`{cmd}`)"
 	}
 }

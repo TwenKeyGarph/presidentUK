@@ -26,7 +26,8 @@ client.connection = mysql.createConnection({
     password: config.db.password,
     database: config.db.name
 });
-
+ 
+console.time('__db_connect')
 if (client.DEBUG) console.log(`HEAD_DB connecting...`)
 client.connection.connect(function (err) {
     if (err) {
@@ -34,6 +35,7 @@ client.connection.connect(function (err) {
         if (client.DEBUG)
             return console.error("HEAD_ERROR: " + err.message);
     } else {
+        console.timeEnd('__db_connect')
         if (client.DEBUG) console.log("HEAD_DB connection established.");
     }
 });
@@ -117,3 +119,4 @@ client.getCmdByAlias = (cmd) => {
 // main
 client.login(config.token);
 if (client.DEBUG) console.log(`HEAD token authorized.`)
+

@@ -23,6 +23,34 @@ module.exports.out = function (client) {
 		defaultLocale: "en",
 		retryInDefaultLocale: true,
 		objectNotation: true,
-		register: global
+		register: global,
+		autoReload: true,
+
+		// whether to write new locale information to disk - defaults to true
+		updateFiles: false,
+
+		// sync locale information across all files - defaults to false
+		syncFiles: false,
+		logDebugFn: function (msg) {
+			console.log('debug', msg)
+		},
+
+		// setting of log level WARN - default to require('debug')('i18n:warn')
+		logWarnFn: function (msg) {
+			console.log('warn', msg)
+		},
+
+		// setting of log level ERROR - default to require('debug')('i18n:error')
+		logErrorFn: function (msg) {
+			console.log('error', msg)
+		},
+
+		// used to alter the behaviour of missing keys
+		missingKeyFn: function (locale, value) {
+			return value
+		},
 	});
+
+
+	require('debug')('i18n:debug')
 }

@@ -24,15 +24,14 @@
 		"about": "Just, awesome game!",
 		"doubleSession": "Session already created. Close by {cmd}",
 		"cmdExample": "Example: {example}",
-		"topEmpty": "Leaderboard is empty. Yo know what's it means?",
+		"topEmpty": "Leaderboard is empty. Do yo know what that means?",
 		"topBoard": "Leaderboard:",
-		"playStart": "Session initialized by {author}",
+		"playStart": "Session initialized by {author}.",
 		"playWon": "You won! \n It took {time} sec & {moves} moves.",
 		"reasonWon": "won.",
 		"reasonTime": "time out.",
 		"reasonCancel": "user.",
-		"playFinished": "Session terminated by {reason}",
-		"cmdExapmle": "fifteen_game.cmdExapmle"
+		"playFinished": "Session terminated by {reason}"
 	},
 	"about-cmd": {
 		"about": "Helping tool!",

@@ -96,6 +96,7 @@ module.exports = {
         } else {
             client.connection.query(`UPDATE user_preferences SET language = '${args[0]}' WHERE userID=${message.author.id};`);
             client.bot.users.preferences.set(message.author.id, args[0]);
+            locale = args[0];
             message.reply(i18n.__mf(
                 { phrase: 'change-lang.langSet', locale: locale },
                 { newlang: i18n.__({ phrase: 'meta.native', locale: locale}) }));

@@ -1,0 +1,2 @@
+// export
+console.timeLog
