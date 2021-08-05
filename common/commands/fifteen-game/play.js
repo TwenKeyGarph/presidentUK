@@ -136,6 +136,7 @@ exports.out = async function (client, message, arg) {
     if (client.CACHE.fifteen.indexOf(sessionID) != -1)
         return 1;
     client.CACHE.fifteen.push(sessionID);
+    console.debug(`\tsession created (${sessionID})`);
     message.channel.send(i18n.__mf(
         { phrase: 'fifteen-game.playStart', locale: locale },
         { author: message.author.username } ));
@@ -148,7 +149,7 @@ exports.out = async function (client, message, arg) {
 
     // moves handle
     collector.on('collect', m => {
-        // console.log(`toMove(${m.content})`); // dbg
+        console.debug(`\ttoMove(${m.content})`); // dbg
         if (m.content == 'cancel') {
             collector.stop('cancel');
         } else if (m.content == 'cheat') {
@@ -171,9 +172,10 @@ exports.out = async function (client, message, arg) {
     });
     // finish game
     collector.on('end', (collected, reason) => {
-        console.log(`Moves: ${collected.size}`);
+        console.debug(`\tmoves: ${collected.size}`);
+        console.debug(`\treason ${reason}`)
         let locReason;
-        if (reason == 'won') {
+        if (reason == 'won') {      
             wonTime = (Date.now() - msgPromise.createdTimestamp) / 1000
             wonMoves = collected.size
             message.reply(i18n.__mf(
@@ -193,21 +195,22 @@ exports.out = async function (client, message, arg) {
             { phrase: 'fifteen-game.playFinished', locale: locale },
             { reason: locReason }));
         client.CACHE.fifteen.splice(client.CACHE.fifteen.indexOf(sessionID));
+        console.debug(`\tsession removed (${sessionID})`);
         // storing into leaderboardfile
-        let isNotFound = true;
         if (reason == 'won') {
             client.connection.query(`SELECT wonMoves FROM fifteengame_leaderboard WHERE sessionID = '${sessionID}'`, function (error, results, fields) {
                 if (error) throw error;
                 if (!(results[0])) { // is result not found
-                    console.log('Inserting new result..')
+                    console.debug('\tinserting new result..')
                     client.connection.query(`INSERT INTO fifteengame_leaderboard (sessionID, wonMoves, wonTime) VALUES (${sessionID}, ${wonMoves}, ${wonTime});`);
                 } else if (JSON.parse(JSON.stringify(results[0])).wonMoves >= wonMoves) { // update worst result
-                    // console.log(JSON.parse(JSON.stringify(results[0])).wonMoves);
+                    // console.log(JSON.parse(JSON.stringify(results[0])).wonMoves); // dbg
+                    console.debug('\tupdating old result..')
                     client.connection.query(`UPDATE fifteengame_leaderboard SET wonMoves = ${wonMoves}, wonTime = ${wonTime} WHERE sessionID = '${sessionID}';`)
                 }
             });
         }
-
+        console.debug('CMD_FIFTEEN-GAME end');
     });
     return 0;
 }

@@ -13,7 +13,7 @@ module.exports = {
         let locale = message.author.loc;
 
         if (!args[0]) {
-
+            console.debug(`CMD_CHANGE-LANG !args`)
             let embed = new Object;
             embed.en = new Discord.MessageEmbed()
                 .setTitle("Locale-system.")
@@ -51,8 +51,6 @@ module.exports = {
 
             let buttons = new MessageActionRow()
                 .addComponents(button.left, button.right, button.select);
-
-            let buttonsEmpty = new MessageActionRow()
             
             let msgPromise = await message.channel.send(embed[locale], buttons);
 
@@ -63,43 +61,55 @@ module.exports = {
                 if (b.id == 'button_left') {
                     msgPromise.edit(embed.en, buttons);
                     locale = 'en';
+                    console.debug(`CMD_CHANGE-LANG ${b.id} ${locale}`)
                 } else if (b.id == 'button_right') {
                     msgPromise.edit(embed.ru, buttons);
                     locale = 'ru';
+                    console.debug(`CMD_CHANGE-LANG ${b.id} ${locale}`)
                 } else if (b.id == 'button_select') {
+                    console.debug(`CMD_CHANGE-LANG ${b.id} ${locale}`)
                     ButtonCollector.stop('cancel')
                 };
                 ButtonCollector.resetTimer();
             });
 
             ButtonCollector.on('end', (collected, reason) => {
-                i18n.setLocale(locale)
-                let embedEND = new Discord.MessageEmbed()
+                let nativeLang = i18n.__({ phrase: 'meta.native', locale: locale} )
+                let desc = i18n.__mf(
+                    { phrase: 'change-lang.langSet', locale: locale },
+                    { newlang: nativeLang});
+                embed.end = new Discord.MessageEmbed()
                     .setTitle("Locale-system.")
-                    .setDescription(i18n.__mf("change-lang.langSet", { newlang: i18n.__("meta.native") }));
-
-                client.connection.query(`UPDATE user_preferences SET language = '${locale}' WHERE userID=${message.author.id};`);
-                client.bot.users.preferences.set(message.author.id, locale);
-                msgPromise.edit(embedEND);
+                    .setDescription(desc);
+                if (!client.bot.users.preferences.get(message.author.id) == locale) {
+                    client.connection.query(`UPDATE user_preferences SET language = '${locale}' WHERE userID=${message.author.id};`);
+                    console.debug(`CMD_CHANGE-LANG prefs set ${message.author.id} - ${locale}`);
+                    client.bot.users.preferences.set(message.author.id, locale);
+                }
+                msgPromise.edit(embed.end);
                 setTimeout(function () {
                     msgPromise.delete();
                     message.delete();
                 }, 2000)
             });
         } else if (args[0] == 'list') {
+            console.debug(`CMD_CHANGE-LANG arg list`);
             message.channel.send(i18n.__mf(
                 { phrase: 'change-lang.langList', locale: locale }) + '\n' + i18n.getLocales().join(' '));
-        } else if (!i18n.getLocales().includes(args[0].toLowerCase())) {
-            message.channel.send(i18n.__(
-                { phrase: 'change-lang.langNotFound', locale: locale }) + '`lang list`')
-            return 1; // lang not found
-        } else {
+        } else if (i18n.getLocales().includes(args[0].toLowerCase())) {
+            console.debug(`CMD_CHANGE-LANG arg lang`)
             client.connection.query(`UPDATE user_preferences SET language = '${args[0]}' WHERE userID=${message.author.id};`);
+            console.debug(`CMD_CHANGE-LANG prefs set ${message.author.id} - ${locale}`);
             client.bot.users.preferences.set(message.author.id, args[0]);
             locale = args[0];
             message.reply(i18n.__mf(
                 { phrase: 'change-lang.langSet', locale: locale },
-                { newlang: i18n.__({ phrase: 'meta.native', locale: locale}) }));
+                { newlang: i18n.__({ phrase: 'meta.native', locale: locale }) }));
+        } else {
+            message.channel.send(i18n.__(
+                { phrase: 'change-lang.langNotFound', locale: locale }) + '`lang list`')
+            return 1; // lang not found
         }
     },
 };
+

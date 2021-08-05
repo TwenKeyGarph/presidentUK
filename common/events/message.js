@@ -26,15 +26,16 @@ module.exports = {
             message.author.priv = 0;
         if (cmd.privileges && !cmd.privileges.includes(message.author.priv)) {
             message.reply(i18n.__({ phrase: 'message.accessDenied', locale: message.author.loc }));
+            console.debug('EV_MESSAGE Wrong privileges')
             return 5; // not enough permissions
         }
      
         try {
+            console.debug(`EV_MESSAGE '${cmd.name}:${cmdCall}' called by ${message.author.id} (${message.author.tag}:${message.author.username})`);
             cmd.execute(client, message, cmdArgs)
-            if (client.DEBUG) console.log(`EV_MESSAGE '${cmd.name}:${cmdCall}' called by ${message.author.id} (${message.author.tag}:${message.author.username})`);
         } catch (err) {
             message.channel.send(`error caught \`${cmd.name}\`:\`${cmdCall}\`\n\`${err.message}\``);
-            if (client.DEBUG) console.log(`EV_MESSAGE ${cmd.name}:${cmdCall} - ${err.message}`);
+            console.debug(`EV_MESSAGE ${cmd.name}:${cmdCall} - ${err.message}`);
             console.error(err);      
         }
     },

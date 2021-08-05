@@ -1,6 +1,7 @@
 // consts
 const i18n = require('i18n');
 const fs = require('fs');
+const path = require('path')
 
 // export
 module.exports.out = function (client) {
@@ -15,7 +16,7 @@ module.exports.out = function (client) {
 
 	let locales = fs.readdirSync('./common/locales').filter(file => file.endsWith('.json'));
 	locales = locales.map(elem => {
-		return elem.slice(0, elem.indexOf('.'))
+		return path.extname(elem)
 	})
 
 	i18n.configure({
@@ -32,17 +33,17 @@ module.exports.out = function (client) {
 		// sync locale information across all files - defaults to false
 		syncFiles: false,
 		logDebugFn: function (msg) {
-			console.log('debug', msg)
+			console.debug('SYS_I18N dbg ' + msg)
 		},
 
 		// setting of log level WARN - default to require('debug')('i18n:warn')
 		logWarnFn: function (msg) {
-			console.log('warn', msg)
+			console.debug('SYS_I18N wrn ' + msg)
 		},
 
 		// setting of log level ERROR - default to require('debug')('i18n:error')
 		logErrorFn: function (msg) {
-			console.log('error', msg)
+			console.debug('SYS_I18N err ' + msg)
 		},
 
 		// used to alter the behaviour of missing keys
@@ -52,5 +53,5 @@ module.exports.out = function (client) {
 	});
 
 
-	require('debug')('i18n:debug')
+	// require('debug')('i18n:debug')
 }

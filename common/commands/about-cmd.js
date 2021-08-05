@@ -10,10 +10,12 @@ module.exports = {
         let arg = args[0];
         const locale = message.author.loc;
 
+
         if (client.CACHE.alias.has(arg)) {
             cmd = client.getCmdByAlias(arg).name
             message.reply(client.getCmdByAlias(arg).aliases[0] + ': ' + i18n.__(
-                                                                        { phrase: `${cmd}.about`, locale: locale }));
+                { phrase: `${cmd}.about`, locale: locale }));
+            console.debug(`CMD_ABOUT-CMD arg ${arg[0]}`);
         } else {
             if (!arg) arg = ' ';
             message.reply(i18n.__mf(

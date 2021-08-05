@@ -11,8 +11,12 @@ module.exports = {
 		client.bot.users = [];
 		client.bot.users.preferences = new Map;
 
+		console.debug('EV_READY Loading i18n...')
+		console.time('__sys_i18n')
 		require('../systems/i18n.js').out(client);
+		console.timeEnd('__sys_i18n')
+		console.debug('EV_READY i18n loaded.')
 
-		if (client.DEBUG) console.log(`EV_READY Application ${client.user.username} are launched.`);
+		console.debug(`EV_READY Application ${client.user.username} are launched.`);
 	},
 };
