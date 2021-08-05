@@ -36,5 +36,8 @@
 	"about-cmd": {
 		"about": "Helping tool!",
 		"wrongArg": "Wrong command (`{cmd}`)"
+	},
+	"black-jack": {
+
 	}
 }
