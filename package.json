@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node index.js"
   },
   "description": "presidentUK",
   "author": {
@@ -24,5 +24,9 @@
     "mysql2": "^2.2.5",
     "pug": "^3.0.2",
     "serve-favicon": "^2.3.0"
+  },
+  "license": {
+    "type": "GNU",
+    "url": "https://opensource.org/licenses/lgpl-3.0.html"
   }
 }

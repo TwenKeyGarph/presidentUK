@@ -4,7 +4,7 @@ const i18n = require('i18n');
 // export
 module.exports = {
     name: 'black-jack',
-    aliases: ['bj'],
+    aliases: ['black-jack', 'bj'],
     example: 'black-jack',
     execute(client, message, args) {
         const locale = message.author.loc;
@@ -15,7 +15,7 @@ module.exports = {
             #values;
 
             constructor(id) {
-                this.#suits = ["?", "?", "?", "?"]; // spades b? clubs b? hearts r? diamonds r?
+                this.#suits = ["♠", "♣", "♥", "♦"]; // spades b♠ clubs b♣ hearts r♥ diamonds r♦
                 this.#values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
                 this.serialNum = id;
             }
@@ -102,6 +102,15 @@ module.exports = {
                 return result;
             }
         };
+
+        let bj = new Blackjack(14);
+        bj.init();
+        bj.shuffle();
+        
+        message.channel.send('https://tenor.com/view/worldxm-shuffle-cards-cardistry-gif-16035579');
+
+        setTimeout(() => message.channel.send(bj.rawToMsg(bj.hit()), 3000));
+        message.delete();
     },
 };
 

@@ -15,7 +15,7 @@ module.exports = {
             cmd = client.getCmdByAlias(arg).name
             message.reply(client.getCmdByAlias(arg).aliases[0] + ': ' + i18n.__(
                 { phrase: `${cmd}.about`, locale: locale }));
-            console.debug(`CMD_ABOUT-CMD arg ${arg[0]}`);
+            console.debug(`CMD_ABOUT-CMD arg ${arg}`);
         } else {
             if (!arg) arg = ' ';
             message.reply(i18n.__mf(
