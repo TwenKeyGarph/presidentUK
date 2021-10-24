@@ -20,16 +20,16 @@ module.exports = {
                 .setDescription("Choose your destiny")
                 .setColor('#36A4CF')
                 .setImage("https://media.discordapp.net/attachments/689554001724833822/868953984394735666/kk.english.png?width=906&height=499")
-                .addField(":flag_gb: __English__", "tia cantry", true)
-                .addField(":flag_ru: Russian", "suqa blet", true);
+                .addField(":flag_gb: __English__", "USA and UK", true)
+                .addField(":flag_ru: Russian", "CIS countries", true);
 
             embed.ru = new Discord.MessageEmbed()
                 .setTitle("Locale-system.")
-                .setDescription("Выбери своего бойца")
+                .setDescription("Выберите язык")
                 .setColor('#CE9A14')
                 .setImage("https://media.discordapp.net/attachments/689554001724833822/868953973741223986/kk.russia.png?width=906&height=499")
-                .addField(":flag_gb: English", "пендосы", true)
-                .addField(":flag_ru: __Russian__", "роисся", true);
+                .addField(":flag_gb: English", "Штаты и Великобритания", true)
+                .addField(":flag_ru: __Russian__", "Страны СНГ", true);
 
 
             let button = new Object;
@@ -81,7 +81,7 @@ module.exports = {
                 embed.end = new Discord.MessageEmbed()
                     .setTitle("Locale-system.")
                     .setDescription(desc);
-                if (!client.bot.users.preferences.get(message.author.id) == locale) {
+                if (client.bot.users.preferences.get(message.author.id) != locale) {
                     client.connection.query(`UPDATE user_preferences SET language = '${locale}' WHERE userID=${message.author.id};`);
                     console.debug(`CMD_CHANGE-LANG prefs set ${message.author.id} - ${locale}`);
                     client.bot.users.preferences.set(message.author.id, locale);

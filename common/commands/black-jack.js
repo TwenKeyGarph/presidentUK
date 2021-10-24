@@ -27,7 +27,6 @@ module.exports = {
                         this.pack.push({ value: value, suit: suit });
                     });
                 });
-
             }
 
             shuffle() {
@@ -38,15 +37,17 @@ module.exports = {
 
                     [this.pack[i], this.pack[j]] = [this.pack[j], this.pack[i]]; // swap
                 }
+                return 0;
             }
 
             take() {
                 if (this.pack)
-                    return this.pack.pop() 
+                    return this.pack.pop()
             }
 
             get content() {
-                return this.pack;
+                if (this.pack)
+                    return this.pack;
             }
 
             get serial() {
@@ -62,6 +63,8 @@ module.exports = {
             constructor(id) {
                 super(id);
                 this.score = 0;
+                this.init();
+                this.shuffle();
             }
 
             hit() {
@@ -79,6 +82,7 @@ module.exports = {
                 return card;
             }
 
+            
             rawToMsg(card) {
                 if (!card)
                     return 1;
@@ -103,13 +107,12 @@ module.exports = {
             }
         };
 
-        let bj = new Blackjack(14);
-        bj.init();
-        bj.shuffle();
+        let bj = new Blackjack(1);
+
         
         message.channel.send('https://tenor.com/view/worldxm-shuffle-cards-cardistry-gif-16035579');
 
-        setTimeout(() => message.channel.send(bj.rawToMsg(bj.hit()), 3000));
+        message.channel.send(bj.rawToMsg(bj.hit()));
         message.delete();
     },
 };

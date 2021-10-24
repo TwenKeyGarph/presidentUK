@@ -7,6 +7,7 @@ module.exports = {
 	once: true,
 	execute(client) {
 		client.CACHE.fifteen = [];
+		client.CACHE.educate = [];
 		client.bot = [];
 		client.bot.users = [];
 		client.bot.users.preferences = new Map;
