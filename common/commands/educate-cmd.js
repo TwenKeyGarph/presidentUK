@@ -2,6 +2,56 @@
 const i18n = require('i18n');
 const Discord = require('discord.js');
 const { MessageButton, MessageActionRow } = require('discord-buttons');
+const Task = class {
+    constructor(arg_quest, arg_answ, arg_id) {
+        this.taskid = arg_id;
+        this.head = arg_quest.head;
+        this.desc = arg_quest.desc;
+        this.variants = arg_answ;
+
+        for (let i = this.variants.length - 1; i > 0; i--) { // shuffle method by FisherYates
+            let j = Math.floor(Math.random() * (i + 1));
+            [this.variants[i], this.variants[j]] = [this.variants[j], this.variants[i]];
+        }
+    }
+
+    get answers() {
+        return this.variants
+    }
+
+    formDiscordEmbed(msg, taskN, tasks) {
+        let embed = new Discord.MessageEmbed()
+            .setTitle(`Вопрос №${taskN + 1}/${tasks}. ${this.head}`)
+            .setDescription(this.desc)
+            .setColor('#36A4CF')
+            .setFooter("На решение даётся #N секунд.")
+            .setThumbnail("https://cdn.discordapp.com/embed/avatars/0.png")
+            .setImage("")
+            .setAuthor(msg.author.username, msg.author.avatarURL());
+            //.addField(":flag_gb: __English__", "USA and UK", true)
+            //.addField(":flag_ru: Russian", "CIS countries", true);
+
+        return embed;
+    }
+
+    get rawToMsg() {
+        return `**${this.head}**\n${this.desc}`;
+    }
+
+    get rowButtons() {
+        let buttons = new MessageActionRow();
+
+        for (let i in this.variants) {
+            let button = new MessageButton()
+                .setStyle('blurple')
+                .setLabel(this.variants[i].head)
+                .setID(this.variants[i].id);
+            buttons.addComponent(button);
+        }
+        return buttons;
+    }
+}
+
 
 // export
 module.exports = {
@@ -12,86 +62,60 @@ module.exports = {
         const sessionID = message.author.id;
         const locale = message.author.loc;
 
-
-        class Task {
-            constructor(quest, answ, id) {
-                this.head = quest.head;
-                this.desc = quest.desc;
-                this.type = (answ.type) ? answ.type : 0;
-                switch (this.type) {
-                    case 1:
-                        this.correct = answ.variants[0];
-                        this.answers = answ.variants;
-                        for (let i = this.answers.length - 1; i > 0; i--) { // shuffle method by Fisher�Yates
-                            let j = Math.floor(Math.random() * (i + 1));
-                            [this.answers[i], this.answers[j]] = [this.answers[j], this.answers[i]];
-                        }
-                        break;
-
-                    default:
-                        this.correct = answ;
-                }
-            }
-
-
-            solution(resp) {
-                switch (this.type) {
-                    default:
-                        if (resp == this.correct)
-                            return true;
-                        return false;
-                }
-            }
-
-
-            getType() {
-                return this.type;
-            }
-
-            get rawToMsg() {
-                return `${this.head} \n ${this.desc}`
-            }
-        }
-
-
-
-
-        let tasks = new Map();
-        tasks.set(0, new Task({ head: "head0", desc: "desc0" }, { type: 1, variants: ["123", "132", "321"] }), 0);
-        tasks.set(1, new Task({ head: "head1", desc: "desc1" }, "123"), 1);
-        tasks.set(2, new Task({ head: "head2", desc: "desc2" }, "123"), 2);
-
         if (client.CACHE.educate.indexOf(sessionID) != -1)
             return 1;
         client.CACHE.educate.push(sessionID);
         console.debug(`\tsession created (${sessionID})`);
 
+        
 
-        let taskNumber = 0;
-        let currentTask = tasks.get(taskNumber);
-        const msgPromise = await message.channel.send(currentTask.rawToMsg);
+        let INDEX = [0, 1, 2];
 
-        start:
-        if (currentTask.type == 1) {
-            let buttonID = 0;
-            let buttons = new MessageActionRow();
-            for (element in currentTask.variants) {
-                let button = new MessageButton()
-                    .setStyle('blurple')
-                    .setLabel(element)
-                    .setID(buttonID++);
-                buttons.addComponent(button);
+        for (let i = INDEX.length - 1; i > 0; i--) { // shuffle method by FisherYates
+            let j = Math.floor(Math.random() * (i + 1));
+            [INDEX[i], INDEX[j]] = [INDEX[j], INDEX[i]];
+        }
+
+        let TASKS = new Map();
+        TASKS.set(INDEX[0], new Task({ head: "Арифметика", desc: "_Натуральный логарифм числа_ `e`" }, [{ id: 0, head: "1", desc: "ну типа 1" }, { id: 1, head: "е", desc: "ну типа е" }, { id: 2, head: "0", desc: "ну типа 0" }, { id: 3, head: "нет", desc: "ну типа нет" }, { id: 4, head: "бесконечность", desc: "ну типа бесконечность" }]), INDEX[0]);
+        TASKS.set(INDEX[1], new Task({ head: "Философия", desc: "_Быть или не быть?_" }, [{ id: 0, head: "или", desc: "ну типа или" }, { id: 1, head: "не быть", desc: "ну типа не быть" }, { id: 2, head: "быть" }]), INDEX[1]);
+        TASKS.set(INDEX[2], new Task({ head: "дефенс оф **", desc: "сейв от ульты легионки" }, [{ id: 0, head: "крест даззла" }, { id: 1, head: "ульта абаддона" }, { id: 2, head: "бкб" }, { id: 3, head: "блинк антимага", desc : "антимаг должен успеть блинкануться до дуэли" }]), INDEX[2]);
+        let BALLS = 0;
+
+        let taskNumber = 0; 
+        let currentTask;
+        currentTask = TASKS.get(taskNumber);
+
+        const msgPromise = await message.channel.send("Тест №1.", { embed: currentTask.formDiscordEmbed(message, taskNumber, TASKS.size), component: currentTask.rowButtons } );
+        const ButtonCollector = msgPromise.createButtonCollector((b) => b.clicker.user.id === message.author.id, { time: 15000 });
+
+        ButtonCollector.on('collect', async (b) => {
+            if (b.id == 0) {
+                BALLS++;
+                let replyProm = await message.reply("✅");
+                setTimeout(() => replyProm.delete(), 500);
+            } else {
+                let replyProm = await message.reply("❎");
+                setTimeout(() => replyProm.delete(), 500);
             }
 
-            let msgPromise = await message.channel.send(currentTask.rawToMsg, buttons);
+            currentTask = TASKS.get(++taskNumber);
+            
+            if (taskNumber >= TASKS.size) {
+                b.reply.defer();
+                ButtonCollector.stop('overflow');
+            } else {
+                msgPromise.edit({ embed: currentTask.formDiscordEmbed(message, taskNumber, TASKS.size), component: currentTask.rowButtons } );
+                ButtonCollector.resetTimer();
+                b.reply.defer();
+            }
+        });
 
-        } else {
-            const filter = message => message.author.id == sessionID;
-            const msgCollector = message.channel.createMessageCollector(filter, { time: 3000 });
-        }
-        
-        
 
+        ButtonCollector.on('end', (collected, reason) => {
+            msgPromise.edit(`_Баллы:_ ${BALLS}/${TASKS.size} \n${(BALLS / TASKS.size >= 0.65) ? "**Зачет**" : "**Не зачет**"}`, { component: null });
+            client.CACHE.educate.splice(client.CACHE.educate.indexOf(sessionID));
+        });  
     },
 };
 
