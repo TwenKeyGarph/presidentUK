@@ -15,22 +15,28 @@ const Task = class {
         }
     }
 
+    get heading() {
+        return this.head;
+    }
+
     get answers() {
         return this.variants
     }
 
     formDiscordEmbed(msg, taskN, tasks) {
+        let varINDEX = 1;
         let embed = new Discord.MessageEmbed()
             .setTitle(`Вопрос №${taskN + 1}/${tasks}. ${this.head}`)
             .setDescription(this.desc)
             .setColor('#36A4CF')
-            .setFooter("На решение даётся #N секунд.")
+            .setFooter("На решение даётся 20 секунд.")
             .setThumbnail("https://cdn.discordapp.com/embed/avatars/0.png")
-            .setImage("")
+            .setImage()
             .setAuthor(msg.author.username, msg.author.avatarURL());
-            //.addField(":flag_gb: __English__", "USA and UK", true)
-            //.addField(":flag_ru: Russian", "CIS countries", true);
-
+        for (let i in this.variants) {
+            if (this.variants[i].desc)
+                embed.addField(`__${varINDEX++}.__ ${this.variants[i].head}`, this.variants[i].desc);
+        }
         return embed;
     }
 
@@ -50,6 +56,14 @@ const Task = class {
         }
         return buttons;
     }
+
+    getRemarkByVariantID(Bid) {
+        for (var i = 0; i < this.variants.length; i++) {
+            if (this.variants[i].id == Bid) {
+                return this.variants[i].remark;
+            }
+        }
+    }
 }
 
 
@@ -62,6 +76,7 @@ module.exports = {
         const sessionID = message.author.id;
         const locale = message.author.loc;
 
+        message.delete();
         if (client.CACHE.educate.indexOf(sessionID) != -1)
             return 1;
         client.CACHE.educate.push(sessionID);
@@ -79,15 +94,16 @@ module.exports = {
         let TASKS = new Map();
         TASKS.set(INDEX[0], new Task({ head: "Арифметика", desc: "_Натуральный логарифм числа_ `e`" }, [{ id: 0, head: "1", desc: "ну типа 1" }, { id: 1, head: "е", desc: "ну типа е" }, { id: 2, head: "0", desc: "ну типа 0" }, { id: 3, head: "нет", desc: "ну типа нет" }, { id: 4, head: "бесконечность", desc: "ну типа бесконечность" }]), INDEX[0]);
         TASKS.set(INDEX[1], new Task({ head: "Философия", desc: "_Быть или не быть?_" }, [{ id: 0, head: "или", desc: "ну типа или" }, { id: 1, head: "не быть", desc: "ну типа не быть" }, { id: 2, head: "быть" }]), INDEX[1]);
-        TASKS.set(INDEX[2], new Task({ head: "дефенс оф **", desc: "сейв от ульты легионки" }, [{ id: 0, head: "крест даззла" }, { id: 1, head: "ульта абаддона" }, { id: 2, head: "бкб" }, { id: 3, head: "блинк антимага", desc : "антимаг должен успеть блинкануться до дуэли" }]), INDEX[2]);
+        TASKS.set(INDEX[2], new Task({ head: "дефенс оф **", desc: "сейв от ульты легионки" }, [{ id: 0, head: "перекачаться в ловкость" }, { id: 1, head: "прожать гост", remark : "дебил ты бить не сможешь" }, { id: 2, head: "собрать линку", remark: "дуэль по АУЕ" }, { id: 3, head: "крест даззла", remark : "его доедят" }]), INDEX[2]);
         let BALLS = 0;
 
-        let taskNumber = 0; 
+        let taskNumber = 0;
         let currentTask;
         currentTask = TASKS.get(taskNumber);
-
+        console.time("__educate-cmd. collector");
         const msgPromise = await message.channel.send("Тест №1.", { embed: currentTask.formDiscordEmbed(message, taskNumber, TASKS.size), component: currentTask.rowButtons } );
-        const ButtonCollector = msgPromise.createButtonCollector((b) => b.clicker.user.id === message.author.id, { time: 15000 });
+        const ButtonCollector = msgPromise.createButtonCollector((b) => b.clicker.user.id === message.author.id, { time: 20000 });
+        let REMARKS = [];
 
         ButtonCollector.on('collect', async (b) => {
             if (b.id == 0) {
@@ -95,6 +111,16 @@ module.exports = {
                 let replyProm = await message.reply("✅");
                 setTimeout(() => replyProm.delete(), 500);
             } else {
+                let ans = currentTask.answers.find(elem => elem.id == b.id);
+                if (ans.remark) {
+                    let body = ans.remark;
+                    let correct = currentTask.answers.find(elem => elem.id == 0).head;
+                    let name = currentTask.heading;
+                    let uncorrect = ans.head;
+                    REMARKS.push({name, body, correct, uncorrect })
+                }
+
+
                 let replyProm = await message.reply("❎");
                 setTimeout(() => replyProm.delete(), 500);
             }
@@ -113,7 +139,22 @@ module.exports = {
 
 
         ButtonCollector.on('end', (collected, reason) => {
-            msgPromise.edit(`_Баллы:_ ${BALLS}/${TASKS.size} \n${(BALLS / TASKS.size >= 0.65) ? "**Зачет**" : "**Не зачет**"}`, { component: null });
+            console.timeEnd("__educate-cmd. collector");
+            let embed = new Discord.MessageEmbed()
+                .setTitle(`Итог.`)
+                .setDescription(`_Баллы:_ ${BALLS}/${TASKS.size} \n${(BALLS / TASKS.size >= 0.65) ? "**Зачет**" : "**Не зачет**"}`)
+                .setColor('#36A4CF')
+                .setThumbnail("https://cdn.discordapp.com/embed/avatars/0.png")
+                .setImage()
+                .setAuthor(message.author.username, message.author.avatarURL());
+            for (let i in REMARKS) {
+                embed.addField(`${REMARKS[i].name}: ~~${REMARKS[i].uncorrect}~~`, `${REMARKS[i].body} (Верный ответ <${REMARKS[i].correct}>)`);
+            }
+            if (REMARKS.length != 0) {
+                embed.setDescription(`_Баллы:_ ${BALLS}/${TASKS.size} \n${(BALLS / TASKS.size >= 0.65) ? "**Зачет**" : "**Не зачет**"} \nРабота над ошибками:`);
+            }
+
+            msgPromise.edit({ embed : embed, component: null });
             client.CACHE.educate.splice(client.CACHE.educate.indexOf(sessionID));
         });  
     },

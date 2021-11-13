@@ -38,7 +38,7 @@
 		"wrongArg": "Wrong command (`{cmd}`)"
 	},
 	"black-jack": {
-		"about": "Awesome deck game!"
+
 	},
 	"educate-cmd": {
 		"about": "Education tool!"

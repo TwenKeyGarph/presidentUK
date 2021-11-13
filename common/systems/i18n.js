@@ -7,7 +7,8 @@ const path = require('path')
 module.exports.out = function (client) {
 	// loading user preferences
 	client.connection.query(`SELECT userID, language FROM user_preferences;`, function (error, results, fields) {
-		if (error) throw error;
+		// if (error) throw error;
+		if (error) return;
 		results.forEach(elem => {
 			const JSONelem = JSON.parse(JSON.stringify(elem));
 			client.bot.users.preferences.set(JSONelem.userID, JSONelem.language);

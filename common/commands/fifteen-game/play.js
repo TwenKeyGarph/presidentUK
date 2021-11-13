@@ -28,8 +28,11 @@ Fifteen = class {
 
     getFormatDraw() {
         let result = '';
+        result += ':yellow_square::yellow_square::yellow_square::yellow_square:';
+        result += ':yellow_square::yellow_square::yellow_square::yellow_square:';
+        result += ':yellow_square::yellow_square::yellow_square::yellow_square:\n';
         for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 4; j++) {
+            for (let j = 0; j < 4; j++) {         
                 switch (this.board[i][j]) {
                     case 1:
                         result += ':zero::one:';
@@ -86,7 +89,7 @@ Fifteen = class {
             result += ':yellow_square::yellow_square::yellow_square::yellow_square:';
             result += ':yellow_square::yellow_square::yellow_square::yellow_square:\n';
         }
-        return result;
+        return '[15]\n' + result;
     }
 
     toRawDraw() {
@@ -199,7 +202,8 @@ exports.out = async function (client, message, arg) {
         // storing into leaderboardfile
         if (reason == 'won') {
             client.connection.query(`SELECT wonMoves FROM fifteengame_leaderboard WHERE sessionID = '${sessionID}'`, function (error, results, fields) {
-                if (error) throw error;
+                // if (error) throw error;
+                if (error) return;
                 if (!(results[0])) { // is result not found
                     console.debug('\tinserting new result..')
                     client.connection.query(`INSERT INTO fifteengame_leaderboard (sessionID, wonMoves, wonTime) VALUES (${sessionID}, ${wonMoves}, ${wonTime});`);

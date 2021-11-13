@@ -14,7 +14,7 @@ client.CACHE.privileges = new Map;
 const mysql = require('mysql');
 const { MessageButton, MessageActionRow } = require('discord-buttons');
 require('./common/systems/condebug.js')
-client.DEBUG = false;
+client.DEBUG = true;
 
 /*
  * ================== *
@@ -46,7 +46,8 @@ client.connection.connect(function (err) {
 // caching privileges
 console.debug(`HEAD_PRIVELEGES loading...`);
 client.connection.query(`SELECT userID, priv FROM privileges;`, function (error, results, fields) {  
-    if (error) throw error;
+    // if (error) throw error; // prohibit using app without db
+    if (error) return;
     console.debug(`HEAD_PRIVELEGES loading done, caching...`);
     results.forEach(elem => {
         const JSONelem = JSON.parse(JSON.stringify(elem))
@@ -121,4 +122,3 @@ client.getCmdByAlias = (cmd) => {
 // main
 client.login(config.token);
 console.debug(`HEAD token authorized.`)
-
