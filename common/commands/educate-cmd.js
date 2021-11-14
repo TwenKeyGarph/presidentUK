@@ -7,6 +7,7 @@ const Task = class {
         this.taskid = arg_id;
         this.head = arg_quest.head;
         this.desc = arg_quest.desc;
+        this.url = arg_quest.url;
         this.variants = arg_answ;
 
         for (let i = this.variants.length - 1; i > 0; i--) { // shuffle method by FisherYates
@@ -31,8 +32,9 @@ const Task = class {
             .setColor('#36A4CF')
             .setFooter("На решение даётся 20 секунд.")
             .setThumbnail("https://cdn.discordapp.com/embed/avatars/0.png")
-            .setImage()
-            .setAuthor(msg.author.username, msg.author.avatarURL());
+            .setAuthor(msg.author.username, "https://cdn.discordapp.com/embed/avatars/0.png"); // msg.author.avatarURL()
+        if (this.url)
+            embed.setImage(this.url);
         for (let i in this.variants) {
             if (this.variants[i].desc)
                 embed.addField(`__${varINDEX++}.__ ${this.variants[i].head}`, this.variants[i].desc);
@@ -92,9 +94,24 @@ module.exports = {
         }
 
         let TASKS = new Map();
-        TASKS.set(INDEX[0], new Task({ head: "Арифметика", desc: "_Натуральный логарифм числа_ `e`" }, [{ id: 0, head: "1", desc: "ну типа 1" }, { id: 1, head: "е", desc: "ну типа е" }, { id: 2, head: "0", desc: "ну типа 0" }, { id: 3, head: "нет", desc: "ну типа нет" }, { id: 4, head: "бесконечность", desc: "ну типа бесконечность" }]), INDEX[0]);
-        TASKS.set(INDEX[1], new Task({ head: "Философия", desc: "_Быть или не быть?_" }, [{ id: 0, head: "или", desc: "ну типа или" }, { id: 1, head: "не быть", desc: "ну типа не быть" }, { id: 2, head: "быть" }]), INDEX[1]);
-        TASKS.set(INDEX[2], new Task({ head: "дефенс оф **", desc: "сейв от ульты легионки" }, [{ id: 0, head: "перекачаться в ловкость" }, { id: 1, head: "прожать гост", remark : "дебил ты бить не сможешь" }, { id: 2, head: "собрать линку", remark: "дуэль по АУЕ" }, { id: 3, head: "крест даззла", remark : "его доедят" }]), INDEX[2]);
+        TASKS.set(INDEX[0], new Task({ head: "Математика", desc: "_Натуральный логарифм числа_ `e`" }, [
+            { id: 0, head: "1" },
+            { id: 1, head: "е" },
+            { id: 2, head: "0" },
+            { id: 3, head: "нет" },
+            { id: 4, head: "бесконечность" }]
+        ), INDEX[0]);
+        TASKS.set(INDEX[1], new Task({ head: "Философия", desc: "_Быть или не быть?_", url: "https://cdnmyslo.ru/BlogArticle/4f/d3/4fd3a225-942d-407d-8cd5-0a8dbcb5f864_1.jpg" }, [
+            { id: 0, head: "или" },
+            { id: 1, head: "не быть" },
+            { id: 2, head: "быть" }]
+        ), INDEX[1]);
+        TASKS.set(INDEX[2], new Task({ head: "История", desc: "В каком городе было проведено СБСЕ? (1973)" }, [
+            { id: 0, head: "Хельсинки" },
+            { id: 1, head: "Женева", remark: "В Женеве собирались на втором этапе." },
+            { id: 2, head: "Москва", remark: "В Москве собирались значительно позже." }]
+        ), INDEX[2]);
+
         let BALLS = 0;
 
         let taskNumber = 0;
@@ -106,6 +123,7 @@ module.exports = {
         let REMARKS = [];
 
         ButtonCollector.on('collect', async (b) => {
+            console.debug(`\tselect(${b.id})`);
             if (b.id == 0) {
                 BALLS++;
                 let replyProm = await message.reply("✅");
@@ -146,7 +164,7 @@ module.exports = {
                 .setColor('#36A4CF')
                 .setThumbnail("https://cdn.discordapp.com/embed/avatars/0.png")
                 .setImage()
-                .setAuthor(message.author.username, message.author.avatarURL());
+                .setAuthor(message.author.username, "https://cdn.discordapp.com/embed/avatars/0.png"); //  msg.author.avatarURL()
             for (let i in REMARKS) {
                 embed.addField(`${REMARKS[i].name}: ~~${REMARKS[i].uncorrect}~~`, `${REMARKS[i].body} (Верный ответ <${REMARKS[i].correct}>)`);
             }
@@ -156,6 +174,8 @@ module.exports = {
 
             msgPromise.edit({ embed : embed, component: null });
             client.CACHE.educate.splice(client.CACHE.educate.indexOf(sessionID));
+            console.debug(`\session removed (${sessionID})`);
+            console.debug("CMD_EDUCATE-CMD end.")
         });  
     },
 };
