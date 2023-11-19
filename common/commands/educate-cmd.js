@@ -32,7 +32,7 @@ const Task = class {
             .setColor('#36A4CF')
             .setFooter("На решение даётся 20 секунд.")
             .setThumbnail("https://cdn.discordapp.com/embed/avatars/0.png")
-            .setAuthor(msg.author.username, "https://cdn.discordapp.com/embed/avatars/0.png"); // msg.author.avatarURL()
+            .setAuthor(msg.author.username, msg.author.avatarURL());
         if (this.url)
             embed.setImage(this.url);
         for (let i in this.variants) {
@@ -164,7 +164,7 @@ module.exports = {
                 .setColor('#36A4CF')
                 .setThumbnail("https://cdn.discordapp.com/embed/avatars/0.png")
                 .setImage()
-                .setAuthor(message.author.username, "https://cdn.discordapp.com/embed/avatars/0.png"); //  msg.author.avatarURL()
+                .setAuthor(message.author.username, message.author.avatarURL());
             for (let i in REMARKS) {
                 embed.addField(`${REMARKS[i].name}: ~~${REMARKS[i].uncorrect}~~`, `${REMARKS[i].body} (Верный ответ <${REMARKS[i].correct}>)`);
             }

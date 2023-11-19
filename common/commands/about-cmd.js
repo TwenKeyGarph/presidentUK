@@ -10,7 +10,6 @@ module.exports = {
         let arg = args[0];
         const locale = message.author.loc;
 
-
         if (client.CACHE.alias.has(arg)) {
             cmd = client.getCmdByAlias(arg).name
             message.reply(client.getCmdByAlias(arg).aliases[0] + ': ' + i18n.__(
